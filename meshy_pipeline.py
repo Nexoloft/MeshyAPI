@@ -103,6 +103,7 @@ class MeshyClient:
         payload = {
             "input_task_id": input_task_id,
             "target_polycount": cfg["target_polycount"],
+            "resize_height": cfg["resize_height"],
             "topology": cfg["topology"],
             "target_formats": cfg["target_formats"],
         }
@@ -282,7 +283,7 @@ class Pipeline:
 
     def step_remesh(self):
         console.rule("[bold green]Step 2/3 : Remesh to "
-                     f"{self.cfg['target_polycount']} polys")
+                     f"{self.cfg['target_polycount']} polys @ {self.cfg['resize_height']}m")
         need = [
             t for t in self.tasks
             if t.image_to_3d_status == "SUCCEEDED" and t.remesh_status == "NOT_STARTED"
@@ -448,11 +449,13 @@ Examples
     rem = parser.add_argument_group("Remesh settings")
     rem.add_argument("--polycount", type=int, default=3000,
                      help="Target polygon count (default: 3000)")
+    rem.add_argument("--resize-height", type=float, default=0.05,
+                     help="Final model height in meters (default: 0.05)")
     rem.add_argument("--topology", default="triangle",
                      choices=["triangle", "quad"],
                      help="Mesh topology (default: triangle)")
-    rem.add_argument("--formats", nargs="+", default=["glb"],
-                     help="Output formats, e.g. glb fbx obj (default: glb)")
+    rem.add_argument("--formats", nargs="+", default=["fbx"],
+                     help="Output formats, e.g. glb fbx obj (default: fbx)")
 
     tex = parser.add_argument_group("Retexture settings")
     tex.add_argument("--enable-pbr", action="store_true",
@@ -484,6 +487,7 @@ Examples
         "image_enhancement": not args.no_image_enhancement,
         "pose_mode": "",
         "target_polycount": args.polycount,
+        "resize_height": args.resize_height,
         "topology": args.topology,
         "target_formats": args.formats,
         "retexture_ai_model": args.ai_model,
@@ -499,7 +503,8 @@ Examples
         f"Input:     {args.input}\n"
         f"Output:    {args.output}\n"
         f"AI Model:  {cfg['ai_model']}  |  Mesh: {cfg['model_type']}\n"
-        f"Remesh:    {cfg['target_polycount']} polys ({cfg['topology']})\n"
+        f"Remesh:    {cfg['target_polycount']} polys ({cfg['topology']}), "
+        f"height={cfg['resize_height']}m\n"
         f"Retexture: remove_lighting={cfg['remove_lighting']}, "
         f"pbr={cfg['enable_pbr']}\n"
         f"Formats:   {', '.join(cfg['target_formats'])}",

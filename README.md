@@ -7,7 +7,7 @@ Automates the full **Image -> 3D -> Remesh -> Retexture** workflow on [Meshy.ai]
 For every `.jpg` / `.jpeg` / `.png` in your input folder the script will:
 
 1. **Image to 3D** — generate a 3D mesh (standard, Meshy 6, image enhancement on, no pose, no initial texture).
-2. **Remesh** — decimate to your target poly count (default 3 000 triangles).
+2. **Remesh** — decimate to your target poly count (default 3 000 triangles) and resize to final height (default 0.05m).
 3. **Retexture** — paint the remeshed model using the original image (Meshy 6, remove lighting, no PBR).
 4. **Download** — save the final model files to an output folder.
 
@@ -53,8 +53,9 @@ python meshy_pipeline.py -i ./images -o ./output --download-only
 | `--model-type` | `standard` | `standard` or `lowpoly` |
 | `--no-image-enhancement` | off | Disable image pre-processing |
 | `--polycount` | `3000` | Target polygon count for remesh |
+| `--resize-height` | `0.05` | Final model height in meters for remesh output |
 | `--topology` | `triangle` | `triangle` or `quad` |
-| `--formats` | `glb` | Output formats (glb, fbx, obj, usdz, stl) |
+| `--formats` | `fbx` | Output formats (glb, fbx, obj, usdz, stl) |
 | `--enable-pbr` | off | Generate PBR maps (metallic, roughness, normal) |
 | `--no-remove-lighting` | off | Keep baked lighting in texture |
 | `--poll-interval` | `10` | Seconds between status checks |
